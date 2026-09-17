@@ -34,12 +34,7 @@ export function Header({ title, subtitle, showControls = true, actions }: Header
           <Selector value={range} options={RANGES} onChange={setRange} />
           <UploadDialog />
           {actions}
-          <div
-            aria-label="User account"
-            className="h-9 w-9 rounded-full bg-gradient-to-br from-accent-indigo/40 to-accent-gold/30 border border-base-border flex items-center justify-center text-xs font-mono text-ink-primary"
-          >
-            WM
-          </div>
+  
         </div>
       )}
       {!showControls && actions}

@@ -1,0 +1,12 @@
+fastapi[all]>=0.115,<1
+uvicorn[standard]>=0.30,<1
+pydantic>=2.8,<3
+pydantic-settings>=2.4,<3
+python-dotenv>=1.0,<2
+numpy>=1.26,<3
+pandas>=2.2,<3
+scikit-learn>=1.5,<2
+supabase>=2.6,<3
+langchain>=0.2,<1
+langchain-openai>=0.1,<1
+prophet>=1.1,<2

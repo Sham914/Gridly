@@ -222,9 +222,7 @@ function SiteHeader() {
           />
         </div>
 
-        <span className="font-semibold text-ink-primary">
-          Gridly <span className="text-accent-gold"></span>
-        </span>
+        <span className="font-semibold text-ink-primary">Gridly</span>
       </Link>
     </header>
   );

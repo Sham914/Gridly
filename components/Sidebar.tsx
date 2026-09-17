@@ -11,12 +11,12 @@ export function Sidebar() {
 
   return (
     <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r border-base-border bg-black/20 backdrop-blur-sm">
-      <div className="flex items-center gap-2 px-6 h-16 border-b border-base-border">
+      <Link href="/" className="focus-ring flex items-center gap-2 px-6 h-16 border-b border-base-border hover:bg-white/5 transition-colors">
         <div className="flex h-8 w-8 items-center justify-center rounded bg-accent-gold/15 text-accent-gold">
           <Zap className="h-4 w-4" strokeWidth={2.25} />
         </div>
         <span className="font-semibold tracking-tight text-ink-primary">Gridly</span>
-      </div>
+      </Link>
 
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-thin">
         {navItems.map((item) => {

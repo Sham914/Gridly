@@ -207,14 +207,14 @@ function Impact({
 function SiteHeader() {
   return (
     <header className="px-6 h-16 flex items-center justify-between max-w-6xl mx-auto">
-      <div className="flex items-center gap-2">
+      <Link href="/" className="focus-ring flex items-center gap-2 hover:opacity-80 transition-opacity">
         <div className="flex h-8 w-8 items-center justify-center rounded bg-accent-gold/15 text-accent-gold">
           <Zap className="h-4 w-4" />
         </div>
         <span className="font-semibold text-ink-primary">
           Gridly <span className="text-accent-gold"></span>
         </span>
-      </div>
+      </Link>
     </header>
   );
 }

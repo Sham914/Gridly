@@ -40,12 +40,12 @@ export function MobileNav() {
               className="fixed inset-y-0 left-0 z-50 w-72 bg-base-surface border-r border-base-border lg:hidden flex flex-col"
             >
               <div className="flex items-center justify-between px-5 h-16 border-b border-base-border">
-                <div className="flex items-center gap-2">
+                <Link href="/" onClick={() => setOpen(false)} className="focus-ring flex items-center gap-2 hover:opacity-80 transition-opacity">
                   <div className="flex h-8 w-8 items-center justify-center rounded bg-accent-gold/15 text-accent-gold">
                     <Zap className="h-4 w-4" />
                   </div>
                   <span className="font-semibold text-ink-primary">Gridly</span>
-                </div>
+                </Link>
                 <button
                   aria-label="Close navigation menu"
                   onClick={() => setOpen(false)}

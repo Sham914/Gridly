@@ -2,7 +2,8 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from routes.signatures import router as signatures_router
+app.include_router(signatures_router)
 from backend.routes.anomalies import router as anomalies_router
 from backend.routes.predict import router as predict_router
 from backend.routes.recommend import router as recommend_router

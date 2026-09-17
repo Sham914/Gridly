@@ -10,3 +10,4 @@ supabase>=2.6,<3
 langchain>=0.2,<1
 langchain-openai>=0.1,<1
 prophet>=1.1,<2
+groq

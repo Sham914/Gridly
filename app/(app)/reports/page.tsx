@@ -17,7 +17,7 @@ export default function ReportsPage() {
     <div>
       <Header title="Reports" subtitle="Monthly energy report preview" showControls={false} />
 
-      <div className="p-4 sm:p-6 space-y-6 max-w-3xl">
+      <div className="p-4 sm:p-6 space-y-6">
         <div className="rounded-card border border-base-border bg-base-surface/70 p-6 sm:p-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">

@@ -5,7 +5,7 @@ export default function SettingsPage() {
   return (
     <div>
       <Header title="Settings" subtitle="Building, units and notification preferences" showControls={false} />
-      <div className="p-4 sm:p-6 max-w-2xl space-y-6">
+      <div className="p-4 sm:p-6 space-y-6">
         <ChartCard title="Building profile">
           <p className="text-sm text-ink-secondary leading-relaxed">
             Building details, occupant counts and tariff rates used across

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
-
+import { QueryProvider } from "@/components/QueryProvider";
 export const metadata: Metadata = {
   title: "Gridly — Smart Energy. Smarter Future.",
   description:
@@ -17,7 +17,9 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         <div className="energy-backdrop" aria-hidden="true" />
-        {children}
+        <QueryProvider>
+          {children}
+        </QueryProvider>
         <Toaster
           theme="dark"
           position="bottom-right"

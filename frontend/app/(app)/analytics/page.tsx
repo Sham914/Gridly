@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useUsage } from "@/hooks/useUsage";
 import {
   BarChart,
   Bar,
@@ -37,15 +38,35 @@ const AREA_SQM = 2400;
 export default function AnalyticsPage() {
   const [tab, setTab] = useState<Tab>("Week");
 
-  const comparisonData =
-    tab === "Day"
-      ? getReadingsForRange(1).map((r) => ({
-          label: `${r.hour.toString().padStart(2, "0")}:00`,
-          kwh: r.usageKwh,
-        }))
-      : tab === "Week"
-      ? getDailyTotals(7).map((d) => ({ label: d.date.slice(5), kwh: d.kwh }))
-      : getDailyTotals(30).map((d) => ({ label: d.date.slice(5), kwh: d.kwh }));
+  const limit = tab === "Day" ? 24 : tab === "Week" ? 24 * 7 : 24 * 30;
+  const { data: usageData = [] } = useUsage({ meter: "BR49", limit });
+
+  const comparisonData = useMemo(() => {
+    if (!usageData.length) return [];
+    
+    if (tab === "Day") {
+      return usageData.map((d) => {
+        const date = new Date(d.timestamp);
+        return {
+          label: `${date.getHours().toString().padStart(2, "0")}:00`,
+          kwh: Number(d.kwh.toFixed(2)),
+        };
+      });
+    } else {
+      const grouped = usageData.reduce((acc, curr) => {
+        const dateStr = curr.timestamp.split("T")[0];
+        const label = dateStr.slice(5); // MM-DD
+        if (!acc[label]) acc[label] = 0;
+        acc[label] += curr.kwh;
+        return acc;
+      }, {} as Record<string, number>);
+      
+      return Object.entries(grouped).map(([label, kwh]) => ({
+        label,
+        kwh: Number(kwh.toFixed(2)),
+      }));
+    }
+  }, [usageData, tab]);
 
   const weekdayWeekend = getWeekdayVsWeekend();
   const baseLoad = getBaseLoad();

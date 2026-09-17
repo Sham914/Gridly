@@ -9,7 +9,7 @@ export default function SettingsPage() {
         <ChartCard title="Building profile">
           <p className="text-sm text-ink-secondary leading-relaxed">
             Building details, occupant counts and tariff rates used across
-            WattWise's calculations will be configurable here in the
+            Gridly's calculations will be configurable here in the
             production version.
           </p>
         </ChartCard>

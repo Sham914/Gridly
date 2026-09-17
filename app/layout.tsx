@@ -3,7 +3,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gridly AI — Smart Energy. Smarter Future.",
+  title: "Gridly — Smart Energy. Smarter Future.",
   description:
     "AI-based energy consumption intelligence and optimization system for households, schools and offices, aligned with SDG 7.",
 };

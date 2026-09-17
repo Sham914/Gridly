@@ -44,9 +44,7 @@ export function MobileNav() {
                   <div className="flex h-8 w-8 items-center justify-center rounded bg-accent-gold/15 text-accent-gold">
                     <Zap className="h-4 w-4" />
                   </div>
-                  <span className="font-semibold text-ink-primary">
-                    WattWise <span className="text-accent-gold">AI</span>
-                  </span>
+                  <span className="font-semibold text-ink-primary">Gridly</span>
                 </div>
                 <button
                   aria-label="Close navigation menu"

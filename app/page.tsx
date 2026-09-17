@@ -1,69 +1,229 @@
-import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Zap,
+  LineChart,
+  TrendingUp,
+  AlertTriangle,
+  Lightbulb,
+  UploadCloud,
+  ScanSearch,
+  ClipboardCheck,
+  Leaf,
+} from "lucide-react";
+import { LandingChartPreview } from "@/components/LandingChartPreview";
 
-export default function Home() {
+const features = [
+  {
+    icon: LineChart,
+    title: "Usage Pattern Analysis",
+    description:
+      "Breaks hourly readings into weekday, weekend and time-of-day patterns so you can see exactly where energy goes.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Demand Forecasting",
+    description:
+      "Projects consumption 24 hours, 7 days or 30 days ahead using historical usage, weather and occupancy signals.",
+  },
+  {
+    icon: AlertTriangle,
+    title: "Anomaly Detection",
+    description:
+      "Flags readings that break from the expected pattern, from a stuck HVAC unit to an unplanned weekend spike.",
+  },
+  {
+    icon: ScanSearch,
+    title: "Wastage Identification",
+    description:
+      "Separates the base load a building actually needs from the load it's losing to idle equipment and schedules.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Smart Recommendations",
+    description:
+      "Turns every finding into a ranked, concrete action with an estimated kWh and rupee saving attached.",
+  },
+];
+
+const steps = [
+  {
+    icon: UploadCloud,
+    title: "Upload energy data",
+    description: "Bring in hourly meter readings as a CSV, or start from sample data.",
+  },
+  {
+    icon: LineChart,
+    title: "Analyze consumption patterns",
+    description: "WattWise breaks usage down by hour, day and tariff period.",
+  },
+  {
+    icon: ScanSearch,
+    title: "Detect waste and forecast demand",
+    description: "Anomalies get flagged and the next 30 days get projected.",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Act on recommendations and track savings",
+    description: "Work through ranked actions and watch the savings tracker move.",
+  },
+];
+
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen">
+      <SiteHeader />
+
+      {/* Hero */}
+      <section className="px-6 pt-14 pb-20 sm:pt-20 sm:pb-28 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent-gold/25 bg-accent-gold/10 px-3 py-1 text-xs font-mono text-accent-gold">
+              <Leaf className="h-3 w-3" />
+              SDG 7 • Affordable &amp; Clean Energy
+            </span>
+            <h1 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-tight text-ink-primary leading-[1.08]">
+              AI-based energy consumption intelligence &amp; optimization
+            </h1>
+            <p className="mt-5 text-ink-secondary text-base sm:text-lg leading-relaxed max-w-lg">
+              WattWise reads raw electricity data and turns it into forecasts,
+              anomaly alerts and concrete cost-saving actions — built for
+              households, schools, offices and any organization watching a
+              meter.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="focus-ring inline-flex items-center gap-2 rounded bg-accent-gold px-5 py-3 text-sm font-semibold text-base-950 hover:bg-accent-gold/90 transition-colors"
+              >
+                Open Dashboard
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <a
+                href="#how-it-works"
+                className="focus-ring inline-flex items-center gap-2 rounded border border-base-border px-5 py-3 text-sm font-medium text-ink-primary hover:border-white/25 transition-colors"
+              >
+                View How It Works
+              </a>
+            </div>
+          </div>
+
+          <LandingChartPreview />
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="px-6 pb-20 max-w-6xl mx-auto">
+        <h2 className="text-2xl font-semibold text-ink-primary text-center mb-2">
+          Five ways WattWise reads your building
+        </h2>
+        <p className="text-center text-ink-muted text-sm max-w-md mx-auto mb-10">
+          Each module works on the same data, answering a different question.
+        </p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {features.map((f) => (
+            <div
+              key={f.title}
+              className="rounded-card border border-base-border bg-base-surface/60 p-5 hover:border-accent-gold/30 transition-colors"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              <f.icon className="h-5 w-5 text-accent-gold" strokeWidth={1.75} />
+              <h3 className="mt-3 text-sm font-semibold text-ink-primary">
+                {f.title}
+              </h3>
+              <p className="mt-1.5 text-sm text-ink-muted leading-relaxed">
+                {f.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="how-it-works" className="px-6 pb-20 max-w-6xl mx-auto">
+        <h2 className="text-2xl font-semibold text-ink-primary text-center mb-10">
+          How it works
+        </h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {steps.map((s, i) => (
+            <div key={s.title} className="relative rounded-card border border-base-border bg-base-surface/60 p-5">
+              <div className="flex items-center justify-between">
+                <s.icon className="h-5 w-5 text-accent-indigo" />
+                <span className="font-mono text-xs text-ink-muted">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <h3 className="mt-3 text-sm font-semibold text-ink-primary">{s.title}</h3>
+              <p className="mt-1.5 text-sm text-ink-muted leading-relaxed">
+                {s.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Impact */}
+      <section className="px-6 pb-20 max-w-6xl mx-auto">
+        <div className="rounded-card border border-base-border bg-gradient-to-br from-base-surface/80 to-black/20 p-8 sm:p-10">
+          <h2 className="text-xl font-semibold text-ink-primary mb-6">
+            What the average deployment finds
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <Impact value="12.4%" label="Average potential reduction" accent="text-accent-gold" />
+            <Impact value="₹4,320" label="Estimated monthly savings" accent="text-status-savings" />
+            <Impact value="74 kWh" label="Avoidable energy identified" accent="text-accent-indigo" />
+          </div>
+        </div>
+      </section>
+
+      <footer className="px-6 py-10 border-t border-base-border">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm text-ink-secondary">
+            <Zap className="h-4 w-4 text-accent-gold" />
+            WattWise AI — Smart Energy. Smarter Future.
+          </div>
+          <p className="text-xs text-ink-muted font-mono">
+            Built in support of SDG 7: Affordable and Clean Energy for all.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </footer>
     </div>
+  );
+}
+
+function Impact({
+  value,
+  label,
+  accent,
+}: {
+  value: string;
+  label: string;
+  accent: string;
+}) {
+  return (
+    <div>
+      <p className={`text-3xl font-semibold tracking-tight ${accent}`}>{value}</p>
+      <p className="text-sm text-ink-muted mt-1">{label}</p>
+    </div>
+  );
+}
+
+function SiteHeader() {
+  return (
+    <header className="px-6 h-16 flex items-center justify-between max-w-6xl mx-auto">
+      <div className="flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded bg-accent-gold/15 text-accent-gold">
+          <Zap className="h-4 w-4" />
+        </div>
+        <span className="font-semibold text-ink-primary">
+          WattWise <span className="text-accent-gold">AI</span>
+        </span>
+      </div>
+      <Link
+        href="/dashboard"
+        className="focus-ring text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
+      >
+        Open Dashboard →
+      </Link>
+    </header>
   );
 }

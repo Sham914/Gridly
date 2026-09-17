@@ -212,13 +212,14 @@ function SiteHeader() {
         href="/"
         className="focus-ring flex items-center gap-2 hover:opacity-80 transition-opacity"
       >
-        <div className="flex h-8 w-8 items-center justify-center">
+        <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md">
           <Image
             src="/favicon.svg"
             alt="Gridly logo"
             width={32}
             height={32}
             priority
+            className="h-full w-full object-cover"
           />
         </div>
 

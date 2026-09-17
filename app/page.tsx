@@ -55,7 +55,7 @@ const steps = [
   {
     icon: LineChart,
     title: "Analyze consumption patterns",
-    description: "WattWise breaks usage down by hour, day and tariff period.",
+    description: "Gridly breaks usage down by hour, day and tariff period.",
   },
   {
     icon: ScanSearch,
@@ -78,15 +78,12 @@ export default function LandingPage() {
       <section className="px-6 pt-14 pb-20 sm:pt-20 sm:pb-28 max-w-6xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-accent-gold/25 bg-accent-gold/10 px-3 py-1 text-xs font-mono text-accent-gold">
-              <Leaf className="h-3 w-3" />
-              SDG 7 • Affordable &amp; Clean Energy
-            </span>
+            
             <h1 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-tight text-ink-primary leading-[1.08]">
               AI-based energy consumption intelligence &amp; optimization
             </h1>
             <p className="mt-5 text-ink-secondary text-base sm:text-lg leading-relaxed max-w-lg">
-              WattWise reads raw electricity data and turns it into forecasts,
+              Gridly reads raw electricity data and turns it into forecasts,
               anomaly alerts and concrete cost-saving actions — built for
               households, schools, offices and any organization watching a
               meter.
@@ -115,7 +112,7 @@ export default function LandingPage() {
       {/* Features */}
       <section className="px-6 pb-20 max-w-6xl mx-auto">
         <h2 className="text-2xl font-semibold text-ink-primary text-center mb-2">
-          Five ways WattWise reads your building
+          Five ways Gridly reads your building
         </h2>
         <p className="text-center text-ink-muted text-sm max-w-md mx-auto mb-10">
           Each module works on the same data, answering a different question.
@@ -179,7 +176,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-sm text-ink-secondary">
             <Zap className="h-4 w-4 text-accent-gold" />
-            WattWise AI — Smart Energy. Smarter Future.
+            Gridly — Smart Energy. Smarter Future.
           </div>
           <p className="text-xs text-ink-muted font-mono">
             Built in support of SDG 7: Affordable and Clean Energy for all.
@@ -215,15 +212,9 @@ function SiteHeader() {
           <Zap className="h-4 w-4" />
         </div>
         <span className="font-semibold text-ink-primary">
-          WattWise <span className="text-accent-gold">AI</span>
+          Gridly <span className="text-accent-gold"></span>
         </span>
       </div>
-      <Link
-        href="/dashboard"
-        className="focus-ring text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
-      >
-        Open Dashboard →
-      </Link>
     </header>
   );
 }

@@ -63,3 +63,14 @@ export interface HeatmapCell {
   hour: number;
   value: number;
 }
+
+export type LoadSignaturePoint = {
+  timestamp: string;
+  cluster_label: string;
+  consumption_kwh: number;
+};
+
+export type PhantomLoadInsight = {
+  yearly_night_baseline_kwh: number;
+  daily_series: { date: string; night_avg_kwh: number }[];
+};

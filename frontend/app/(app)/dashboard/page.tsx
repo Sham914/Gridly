@@ -41,6 +41,7 @@ import {
 } from "@/lib/mock-data";
 import { formatINR } from "@/lib/utils";
 
+
 const chartAxisStyle = { fontSize: 11, fill: "#7C8A78" };
 
 export default function DashboardPage() {

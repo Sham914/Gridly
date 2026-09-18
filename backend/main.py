@@ -2,15 +2,16 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes.signatures import router as signatures_router
-app.include_router(signatures_router)
+from backend.routes.signatures import router as signatures_router
 from backend.routes.anomalies import router as anomalies_router
 from backend.routes.predict import router as predict_router
 from backend.routes.recommend import router as recommend_router
 from backend.routes.usages import router as usage_router
 from backend.routes.wastage import router as wastage_router
 
+
 app = FastAPI(title="Nexora AI Backend", version="0.1.0")
+app.include_router(signatures_router)
 
 app.add_middleware(
     CORSMiddleware,

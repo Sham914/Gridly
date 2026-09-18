@@ -12,3 +12,7 @@ export function formatINR(value: number): string {
 export function formatKWh(value: number, digits = 1): string {
   return `${value.toFixed(digits)} kWh`;
 }
+
+export function formatNumber(value: number, digits = 1): string {
+  return Number.isFinite(value) ? value.toFixed(digits) : "0.0";
+}

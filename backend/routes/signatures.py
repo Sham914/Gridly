@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 import pandas as pd
-from models.load_signature import extract_features, cluster_load_signatures
+from backend.models.load_signature import extract_features, cluster_load_signatures
 
 router = APIRouter()
 

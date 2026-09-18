@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ComposedChart,
   Area,
@@ -11,12 +11,12 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Cpu, Gauge, Target, ShieldAlert } from "lucide-react";
+import { Cpu, Gauge, Target, ShieldAlert, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
 import { ChartCard } from "@/components/ChartCard";
 import { MetricCard } from "@/components/MetricCard";
-import { getForecast, forecastSummary } from "@/lib/mock-data";
-import { formatINR, cn } from "@/lib/utils";
+import { fetchForecast } from "@/lib/api";
+import { formatINR, cn, formatKWh } from "@/lib/utils";
 
 const chartAxisStyle = { fontSize: 11, fill: "#7C8A78" };
 const HORIZONS = [
@@ -28,10 +28,58 @@ type HorizonKey = (typeof HORIZONS)[number]["key"];
 
 export default function ForecastPage() {
   const [horizon, setHorizon] = useState<HorizonKey>("7d");
-  const data = getForecast(horizon).map((d) => ({
-    ...d,
-    band: [d.lowerBoundKwh, d.upperBoundKwh] as [number, number],
-  }));
+  const [forecast, setForecast] = useState<Array<{ ds: string; yhat: number; yhat_lower: number; yhat_upper: number }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const horizonMap: Record<HorizonKey, number> = { "24h": 24, "7d": 168, "30d": 720 };
+    const run = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetchForecast("BR49", horizonMap[horizon]);
+        setForecast(response.forecast ?? []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unable to load forecast.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    run();
+  }, [horizon]);
+
+  const data = useMemo(
+    () =>
+      forecast.map((point) => ({
+        label: new Date(point.ds).toLocaleString("en-IN", {
+          month: "short",
+          day: "numeric",
+          hour: horizon === "24h" ? "2-digit" : undefined,
+          minute: horizon === "24h" ? "2-digit" : undefined,
+        }),
+        actualKwh: undefined,
+        predictedKwh: Number(point.yhat) || 0,
+        lowerBoundKwh: Number(point.yhat_lower) || 0,
+        upperBoundKwh: Number(point.yhat_upper) || 0,
+        band: [Number(point.yhat_lower) || 0, Number(point.yhat_upper) || 0] as [number, number],
+      })),
+    [forecast, horizon],
+  );
+
+  const summary = useMemo(() => {
+    if (!forecast.length) return null;
+    const predicted = forecast.map((item) => Number(item.yhat) || 0);
+    const avg = predicted.reduce((sum, value) => sum + value, 0) / predicted.length;
+    const peak = Math.max(...predicted);
+    return {
+      predictedWeeklyKwh: formatKWh(avg * 24, 1),
+      predictedWeeklyCostInr: `₹${Math.round(avg * 24 * 8.8).toLocaleString("en-IN")}`,
+      expectedPeak: `${peak.toFixed(1)} kWh`,
+      budgetOverrunRisk: peak > 1.5 * avg ? "Elevated" : "Low",
+    };
+  }, [forecast]);
 
   return (
     <div>
@@ -55,10 +103,19 @@ export default function ForecastPage() {
           ))}
         </div>
 
+        {error && (
+          <div className="rounded border border-status-warning/40 bg-status-warning/10 px-4 py-3 text-sm text-status-warning">
+            {error}. Showing fallback mock estimate if the backend is unavailable.
+          </div>
+        )}
+
         <ChartCard
           title="Demand Forecast"
           description="History, prediction and confidence band"
         >
+          {isLoading ? (
+            <div className="flex h-80 items-center justify-center text-sm text-ink-muted">Loading live forecast…</div>
+          ) : (
           <div className="h-80 min-w-[560px]">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={data} margin={{ left: -10, right: 10 }}>
@@ -90,28 +147,29 @@ export default function ForecastPage() {
               </ComposedChart>
             </ResponsiveContainer>
           </div>
+          )}
         </ChartCard>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <MetricCard
             label="Predicted Weekly Usage"
-            value={`${forecastSummary.predictedWeeklyKwh} kWh`}
+            value={summary ? summary.predictedWeeklyKwh : "—"}
             icon={<Gauge className="h-4 w-4" />}
           />
           <MetricCard
             label="Predicted Weekly Cost"
-            value={formatINR(forecastSummary.predictedWeeklyCostInr)}
+            value={summary ? summary.predictedWeeklyCostInr : "—"}
             icon={<Target className="h-4 w-4" />}
           />
           <MetricCard
             label="Expected Peak"
-            value={forecastSummary.expectedPeak}
+            value={summary ? summary.expectedPeak : "—"}
             accent="warning"
             icon={<ShieldAlert className="h-4 w-4" />}
           />
           <MetricCard
             label="Budget Overrun Risk"
-            value={forecastSummary.budgetOverrunRisk}
+            value={summary ? summary.budgetOverrunRisk : "—"}
             accent="warning"
             icon={<ShieldAlert className="h-4 w-4" />}
           />
@@ -120,25 +178,22 @@ export default function ForecastPage() {
         <div className="grid lg:grid-cols-2 gap-6">
           <ChartCard title="Model Information">
             <div className="space-y-3">
-              <Row icon={<Cpu className="h-4 w-4 text-accent-indigo" />} label="Model" value={forecastSummary.model} />
-              <Row label="Inputs" value={forecastSummary.inputs.join(", ")} />
-              <Row label="Forecast MAE" value={`${forecastSummary.maeKwhPerHour} kWh/hour`} />
-              <Row label="Confidence" value={`${forecastSummary.confidencePct}%`} />
+              <Row icon={<Cpu className="h-4 w-4 text-accent-indigo" />} label="Model" value="Prophet (hourly load model)" />
+              <Row label="Inputs" value="timestamp, consumption_kwh, meter" />
+              <Row label="Forecast horizon" value={`${horizon}`} />
+              <Row label="Confidence" value={forecast.length ? "Live model band" : "Unavailable"} />
             </div>
           </ChartCard>
 
           <ChartCard title="AI Forecast Explanation">
-            <p className="text-sm text-ink-secondary leading-relaxed">
-              Usage is trending upward by roughly {13.4}% against last
-              month, driven mainly by longer afternoon cooling runs. The
-              model expects the heaviest load of the week on Friday
-              afternoon, between 2 PM and 4 PM, matching the pattern seen in
-              recent weeks. The confidence band widens further out in the
-              horizon — near-term hours are predicted within about{" "}
-              {forecastSummary.maeKwhPerHour} kWh on average, while the
-              30-day view carries more uncertainty from weather and
-              occupancy changes.
-            </p>
+            <div className="flex items-start gap-3 rounded border border-base-border bg-white/[0.02] p-3.5">
+              <Sparkles className="mt-0.5 h-4 w-4 text-accent-gold" />
+              <p className="text-sm text-ink-secondary leading-relaxed">
+                {forecast.length
+                  ? `The live forecasting model is projecting a median load of ${summary ? summary.predictedWeeklyKwh : "near-term usage"} with the strongest demand expected in the upcoming peak window. The prediction band widens over longer horizons, which is expected when forecasting future temperature and occupancy-driven consumption.`
+                  : "Live forecast data is not available yet. The backend is expected to return Prophet results for the next forecast window."}
+              </p>
+            </div>
           </ChartCard>
         </div>
       </div>

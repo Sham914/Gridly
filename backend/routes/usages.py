@@ -6,20 +6,49 @@ from fastapi import APIRouter, HTTPException, Query
 
 router = APIRouter(prefix="/usage", tags=["usage"])
 
-DEFAULT_DATASET_PATH = Path(__file__).resolve().parents[1] / "notebooks" / "data.csv"
-DATASET_PATH = Path(__import__("os").getenv("DATASET_PATH", DEFAULT_DATASET_PATH))
 
-# Load once at startup, not on every request.
-if not DATASET_PATH.exists():
-    raise FileNotFoundError(f"Usage dataset not found: {DATASET_PATH}")
+def resolve_dataset_path() -> Path:
+    project_root = Path(__file__).resolve().parents[1]
+    env_value = __import__("os").getenv("DATASET_PATH")
+    candidates = [
+        Path(env_value) if env_value else None,
+        project_root / "data" / "processed" / "BR49" / "br49_hourly.csv",
+        project_root / "data" / "processed" / "BR49" / "br49_daily.csv",
+        project_root / "data" / "processed" / "BR49" / "br49_monthly.csv",
+        project_root / "notebooks" / "data.csv",
+    ]
+    for candidate in candidates:
+        if candidate is not None and candidate.exists():
+            return candidate
+    return project_root / "data" / "processed" / "BR49" / "br49_hourly.csv"
 
-df = pd.read_csv(DATASET_PATH, parse_dates=["x_Timestamp"])
-df = df.rename(
-    columns={
-        "x_Timestamp": "timestamp",
-        "t_kWh": "kwh",
-    }
-)
+
+def load_usage_frame() -> pd.DataFrame:
+    dataset_path = resolve_dataset_path()
+    frame = pd.read_csv(dataset_path)
+
+    if frame.empty:
+        raise ValueError(f"Usage dataset is empty: {dataset_path}")
+
+    if "meter" not in frame.columns and "meter_id" in frame.columns:
+        frame["meter"] = frame["meter_id"]
+
+    timestamp_col = next((c for c in ["timestamp", "x_Timestamp", "datetime", "date"] if c in frame.columns), None)
+    value_col = next((c for c in ["consumption_kwh", "t_kWh", "usage_kwh", "kwh", "value"] if c in frame.columns), None)
+
+    if timestamp_col is None or value_col is None:
+        raise ValueError(
+            "Unsupported usage dataset columns. Expected a timestamp and a consumption column like "
+            "timestamp/consumption_kwh or x_Timestamp/t_kWh."
+        )
+
+    normalized = frame[[timestamp_col, value_col, "meter"]].copy() if "meter" in frame.columns else frame[[timestamp_col, value_col]].copy()
+    normalized = normalized.rename(columns={timestamp_col: "timestamp", value_col: "kwh"})
+    if "meter" not in normalized.columns:
+        normalized["meter"] = "BR49"
+    normalized["timestamp"] = pd.to_datetime(normalized["timestamp"], errors="coerce")
+    normalized["kwh"] = pd.to_numeric(normalized["kwh"], errors="coerce")
+    return normalized.dropna(subset=["timestamp", "kwh"]).sort_values("timestamp").reset_index(drop=True)
 
 
 @router.get("")
@@ -33,7 +62,8 @@ def get_usage(
     Returns raw timestamp + kWh usage data for a given household,
     for chart display on the frontend.
     """
-    household = df[df["meter"] == meter].copy()
+    df = load_usage_frame()
+    household = df[df["meter"].astype(str).str.lower() == meter.lower()].copy()
 
     if household.empty:
         raise HTTPException(status_code=404, detail=f"No data found for meter '{meter}'")
@@ -48,4 +78,4 @@ def get_usage(
     if limit:
         household = household.tail(limit)
 
-    return household[["timestamp", "kwh"]].to_dict(orient="records")
+    return household[["timestamp", "kwh"]].assign(timestamp=lambda row: row["timestamp"].dt.strftime("%Y-%m-%dT%H:%M:%S")).to_dict(orient="records")

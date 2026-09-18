@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend as RLegend } from "recharts";
 import { PiggyBank, Leaf, Percent } from "lucide-react";
 import { toast } from "sonner";
@@ -8,10 +8,13 @@ import { Header } from "@/components/Header";
 import { ChartCard } from "@/components/ChartCard";
 import { MetricCard } from "@/components/MetricCard";
 import { RecommendationCard } from "@/components/RecommendationCard";
+import { AIInsightCard } from "@/components/AIInsightCard";
+import { fetchRecommendationSummary } from "@/lib/api";
 import {
   recommendations as initialRecs,
   kpis,
   savingsTracker,
+  anomalies,
 } from "@/lib/mock-data";
 import type { Recommendation } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
@@ -20,6 +23,32 @@ const chartAxisStyle = { fontSize: 11, fill: "#7C8A78" };
 
 export default function RecommendationsPage() {
   const [recs, setRecs] = useState<Recommendation[]>(initialRecs);
+  const [recommendationSummary, setRecommendationSummary] = useState<string>("Loading AI recommendation…");
+  const [isLoadingSummary, setIsLoadingSummary] = useState(true);
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const response = await fetchRecommendationSummary({
+          forecast: { sample: true },
+          anomalies: anomalies.map((item) => ({
+            type: item.type,
+            actualKwh: item.actualKwh,
+            expectedKwh: item.expectedKwh,
+            excessKwh: item.excessKwh,
+          })),
+          wastage: [],
+        });
+        setRecommendationSummary(response.recommendation);
+      } catch {
+        setRecommendationSummary("The backend is unavailable, but the rule-based recommendation engine still highlights the highest-cost actions based on the live load pattern.");
+      } finally {
+        setIsLoadingSummary(false);
+      }
+    };
+
+    run();
+  }, []);
 
   const updateStatus = (id: string, status: Recommendation["status"]) => {
     setRecs((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
@@ -38,6 +67,8 @@ export default function RecommendationsPage() {
       <Header title="Energy-Saving Recommendations" subtitle="Ranked actions with estimated impact" />
 
       <div className="p-4 sm:p-6 space-y-6">
+        <AIInsightCard title="AI recommendation summary" summary={recommendationSummary} isLoading={isLoadingSummary} />
+
         <ChartCard title="Savings Opportunity">
           <div className="grid sm:grid-cols-3 gap-4">
             <MetricCard

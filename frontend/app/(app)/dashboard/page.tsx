@@ -185,14 +185,14 @@ export default function DashboardPage() {
             </div>
           </ChartCard>
         </div>
-
+{/*
         <ChartCard
           title="Weekly Energy Pattern"
           description="Hourly load across the last 7 days — darker cells mean higher draw"
         >
           <HeatmapGrid cells={heatmap} />
         </ChartCard>
-
+*/}
         <div className="grid lg:grid-cols-3 gap-6">
           <ChartCard title="Top Energy Insights" className="lg:col-span-1">
             <div className="space-y-2.5">

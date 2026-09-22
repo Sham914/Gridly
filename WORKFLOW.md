@@ -1,7 +1,7 @@
-# Nexora Workflow and Feature Overview
+# Gridly Workflow and Feature Overview
 
 ## Product Purpose
-Nexora is an AI-powered energy intelligence platform designed to help households, commercial buildings, schools, and facilities monitor electricity usage, detect abnormal consumption, forecast demand, and recommend practical cost-saving actions.
+Gridly is an AI-powered energy intelligence platform designed to help households, commercial buildings, schools, and facilities monitor electricity usage, detect abnormal consumption, forecast demand, and recommend practical cost-saving actions.
 
 The platform turns raw meter data into operational insights such as consumption trends, anomaly alerts, demand projections, and optimization recommendations.
 
@@ -200,7 +200,7 @@ The backend supports the main intelligence layer of the product.
 ---
 
 ## Expected Product Outcomes
-Nexora helps users:
+Gridly helps users:
 - reduce avoidable energy waste
 - improve cost visibility
 - understand peak demand timing

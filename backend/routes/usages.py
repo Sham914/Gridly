@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -7,7 +8,16 @@ from fastapi import APIRouter, HTTPException, Query
 router = APIRouter(prefix="/usage", tags=["usage"])
 
 DEFAULT_DATASET_PATH = Path(__file__).resolve().parents[1] / "notebooks" / "data.csv"
-DATASET_PATH = Path(__import__("os").getenv("DATASET_PATH", DEFAULT_DATASET_PATH))
+raw_dataset_path = os.getenv("DATASET_PATH")
+if raw_dataset_path:
+    candidate_path = Path(raw_dataset_path).expanduser()
+    if not candidate_path.is_absolute():
+        candidate_path = Path.cwd() / candidate_path
+    if not candidate_path.exists():
+        candidate_path = Path(__file__).resolve().parents[1] / raw_dataset_path
+    DATASET_PATH = candidate_path if candidate_path.exists() else DEFAULT_DATASET_PATH
+else:
+    DATASET_PATH = DEFAULT_DATASET_PATH
 
 # Load once at startup, not on every request.
 if not DATASET_PATH.exists():

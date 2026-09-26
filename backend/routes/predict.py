@@ -8,7 +8,7 @@ import pandas as pd
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from backend.models.forecasting import forecast_household
+from backend.models.forecasting import get_forecast
 
 
 router = APIRouter(prefix="/predict", tags=["predict"])
@@ -24,5 +24,5 @@ class ForecastRequest(BaseModel):
 def create_forecast(payload: ForecastRequest) -> dict[str, object]:
     dataset_file = Path(__file__).resolve().parents[1] / "notebooks" / payload.dataset_path
     df = pd.read_csv(dataset_file)
-    forecast = forecast_household(payload.meter_id, df, payload.forecast_hours)
+    forecast = get_forecast(payload.meter_id, df, payload.forecast_hours)
     return {"forecast": forecast.to_dict(orient="records")}
